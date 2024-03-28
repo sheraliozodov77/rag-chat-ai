@@ -71,6 +71,6 @@ httpApp.use((req, res) => {
   res.redirect(301, 'https://${req.headers.host}${req.url}')
 })
 
-const httpServer = http.createServer(httpsApp);
+const httpServer = http.createServer(httpApp);
 
 httpServer.listen(80);
