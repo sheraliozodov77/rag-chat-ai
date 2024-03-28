@@ -4,7 +4,7 @@ require('dotenv').config();
 const router = express.Router();
 
 const openai = new OpenAI({
-  api_key: process.env.OPENAI_API_KEY,
+  api_key: "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"
 });
 
 router.post('/ask', async (req, res) => {
