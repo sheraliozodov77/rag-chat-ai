@@ -15,7 +15,7 @@ require('dotenv').config();
 const connectD = require('./config/db');
 const authenticate = require('./middleware/authenticate');
 const authRoutes = require('./routes/authRoutes'); 
-const openaiRoutes = require('./routes/openairoutes');
+const openaiRoutes = require('./routes/openaiRoutes');
 
 const app = express();
 
