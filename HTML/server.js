@@ -12,7 +12,7 @@ const http = require('http');
 require('dotenv').config();
 
 
-const connectD = require('./config/db');
+const connectDB = require('./config/db');
 const authenticate = require('./middleware/authenticate');
 const authRoutes = require('./routes/authRoutes'); 
 const openaiRoutes = require('./routes/openaiRoutes');
