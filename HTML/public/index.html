@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface - Uzbek Version</title>
+    <link rel="stylesheet" href="./css/styles_chat.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="#">Home</a>
+        <a href="#">Account</a>
+        <a href="#">Settings</a>
+        <a href="#" id="logout">Logout</a>
+        <!-- Add more sidebar items here -->
+    </div>
+
+    <!-- Account Button -->
+    <span class="openbtn" onclick="toggleNav()">&#9776; Profile</span>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            <!-- Chat content will go here -->
+            <div class="center-content">
+                <img src="./images/logo4.png" alt="Logo" class="logo">
+                <p class="help-text">How can I help you today?</p>
+            </div>
+        </div>
+        <div class="input-area">
+            <div class="input-group">
+                <textarea id="chatInput" placeholder="Write your message..."></textarea> <!-- Changed to textarea -->
+                <button class="send-button" onclick="sendMessage()">
+                    <span class="arrow-up">&#x2191;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/script_chat.js"></script>
+    <script src="./js/client.js"></script>
+</body>
+</html>
