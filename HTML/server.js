@@ -1,18 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const OpenAI = require('openai');
-require('dotenv').config();
-
-const connectDB = require('./config/db');
-const { initializePinecone } = require('./config/vectorDB'); // Import Pinecone initialization
-const authenticate = require('./middleware/authenticate');
-const authRoutes = require('./routes/authRoutes'); 
-const openaiRoutes = require('./routes/openaiRoutes');
-const pdfRoutes = require('./routes/pdfRoutes'); // Import PDF routes
+import express from "express";
+import mongoose from "mongoose";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import { initializePinecone } from "./config/vectorDB.js";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import openaiRoutes from "./routes/openaiRoutes.js";
+import pdfRoutes from "./routes/pdfRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import authenticate from "./middleware/authenticate.js";
 
 const app = express();
 
@@ -40,7 +39,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI || 'mongodb://127.0.0.1/mydatabase', // Use environment variable for MongoDB URI
+    mongoUrl: process.env.MONGO_URI || 'mongodb://127.0.0.1/mydatabase_new', // Use environment variable for MongoDB URI
   }),
   cookie: {
     maxAge: 2 * 60000,
@@ -54,12 +53,17 @@ app.use('/auth', authRoutes);
 app.use('/pdf', pdfRoutes); // Add PDF ingestion routes
 app.use(openaiRoutes);
 
-app.get('/chat', authenticate, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+// Simulate `__dirname` in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve the chat page
+app.get("/chat", authenticate, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "chat.html"));
 });
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Start HTTP server locally
 const PORT = process.env.PORT || 3000; // Use environment variable for port

@@ -1,21 +1,20 @@
-const { PineconeClient } = require('@pinecone-database/pinecone');
-require('dotenv').config();
+import { Pinecone } from "@pinecone-database/pinecone";
+import dotenv from "dotenv";
 
-const pinecone = new PineconeClient();
+dotenv.config();
 
-const initializePinecone = async () => {
-    try {
-        await pinecone.init({
-            apiKey: process.env.PINECONE_API_KEY,
-            environment: process.env.PINECONE_ENVIRONMENT,
-        });
-        console.log('Pinecone client initialized');
-    } catch (error) {
-        console.error('Error initializing Pinecone:', error);
-    }
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY,
+});
+
+export const initializePinecone = async () => {
+  try {
+    const indexes = await pinecone.listIndexes();
+    console.log("Pinecone initialized successfully. Available indexes:", indexes);
+  } catch (error) {
+    console.error("Failed to initialize Pinecone:", error.message);
+    process.exit(1);
+  }
 };
 
-module.exports = {
-    pinecone,
-    initializePinecone,
-};
+export { pinecone };

@@ -1,10 +1,12 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const vectorSchema = new mongoose.Schema({
-    url: { type: String, unique: true },
-    text: String,
-    embedding: [Number],
-    updatedAt: { type: Date, default: Date.now },
+  url: { type: String, unique: true },
+  text: String,
+  embedding: [Number],
+  updatedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Vector', vectorSchema);
+const Vector = mongoose.model("Vector", vectorSchema);
+
+export default Vector;

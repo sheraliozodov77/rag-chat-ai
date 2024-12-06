@@ -1,71 +1,71 @@
-const express = require('express');
-const OpenAI = require('openai');
-const { pinecone, indexName } = require('../config/vectorDB'); // Import Pinecone setup
-const { createEmbedding } = require('../utils/embeddingUtils'); // Embedding utility
-require('dotenv').config();
+import express from "express";
+import { pinecone } from "../config/vectorDB.js";
+import { createEmbedding } from "../utils/embeddingUtils.js";
+import OpenAI from "openai";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
 
 const openai = new OpenAI({
-  api_key: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-router.post('/ask', async (req, res) => {
+router.post("/ask", async (req, res) => {
   try {
     const userInput = req.body.question;
 
-    // Step 1: Generate embedding for the user query
+    // Step 1: Convert the user's query into an embedding
     const queryEmbedding = await createEmbedding(userInput);
 
-    // Step 2: Query the Pinecone index for relevant documents
-    const pineconeIndex = pinecone.Index(indexName);
+    // Step 2: Query Pinecone for relevant documents
+    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
     const searchResults = await pineconeIndex.query({
       vector: queryEmbedding,
-      topK: 5, // Number of top results to retrieve
-      includeMetadata: true,
+      topK: 5, // Number of most relevant chunks to retrieve
+      includeMetadata: true, // Include text metadata in the response
     });
 
-    // Step 3: Extract relevant document text from the search results
+    // Step 3: Extract the retrieved text chunks
     const context = searchResults.matches
       .map((match) => match.metadata.text)
-      .join('\n---\n'); // Join relevant results with a separator
+      .join("\n\n"); // Combine the text from the top matches
 
-    // Step 4: Send the query and retrieved context to OpenAI
+    if (!context) {
+      return res.status(404).json({
+        message: "No relevant data found in the provided documents.",
+      });
+    }
+
+    // Step 4: Pass the context to OpenAI for answering
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: "You are a legal assistant. Use the provided legal documents to answer user questions accurately.",
+          content: "You are a helpful assistant. Use the following context to answer the user's question strictly based on the information provided.",
         },
         {
           role: "system",
-          content: `Relevant legal context:\n${context}`,
+          content: `Context:\n${context}`,
         },
         {
           role: "user",
           content: userInput,
         },
       ],
-      max_tokens: 150,
+      max_tokens: 300, // Limit the length of the response
       temperature: 0.7,
-      frequency_penalty: 0,
-      presence_penalty: 0,
     });
 
-    console.log('API Response:', response);
-
-    // Step 5: Return the AI's answer to the user
-    if (Array.isArray(response.choices) && response.choices.length > 0) {
-      const answer = response.choices[0].message.content;
-      res.json({ answer });
-    } else {
-      res.status(500).json({ error: 'No valid response from the API.' });
-    }
+    // Step 5: Send the response back to the user
+    const answer = response.choices[0]?.message?.content || "I'm sorry, I couldn't find an answer.";
+    res.json({ answer });
   } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).json({ error: 'An error occurred while processing your request.' });
+    console.error("Error in /ask:", error.message);
+    res.status(500).json({ error: "An error occurred while processing your request." });
   }
 });
 
-module.exports = router;
+export default router;

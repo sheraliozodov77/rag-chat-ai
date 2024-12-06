@@ -1,21 +1,21 @@
-const { Configuration, OpenAIApi } = require('openai');
-const dotenv = require('dotenv');
+import OpenAI from "openai";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
-
-const createEmbedding = async (text) => {
-    const response = await openai.createEmbedding({
-        model: 'text-embedding-ada-002',
-        input: text,
+export const createEmbedding = async (text) => {
+  try {
+    const response = await openai.embeddings.create({
+      model: "text-embedding-ada-002",
+      input: text,
     });
-
-    return response.data.data[0].embedding;
+    return response.data[0].embedding; // Extract the embedding from the response
+  } catch (error) {
+    console.error("Error creating embedding:", error.message);
+    throw new Error("Failed to create embedding");
+  }
 };
-
-module.exports = { createEmbedding };
