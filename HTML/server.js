@@ -58,8 +58,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve the chat page
-app.get("/chat", authenticate, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "chat.html"));
+app.get("/index", authenticate, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Serve static files
