@@ -92,7 +92,7 @@ function displayMessage(message, sender) {
     var senderName = document.createElement('div');
     var messageText = document.createElement('div');
 
-    senderName.textContent = sender === 'user' ? 'You' : 'UzGPT';
+    senderName.textContent = sender === 'user' ? 'You' : 'AI';
     senderName.style.fontWeight = 'bold';
     senderName.style.color = sender === 'user' ? '#3498DB' : '#2ECC71';
 

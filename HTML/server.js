@@ -33,6 +33,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/pdf", pdfRoutes); // Add PDF/Website ingestion route
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'yourSecretKey121212', // Use environment variable for session secret

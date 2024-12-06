@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
 const vectorSchema = new mongoose.Schema({
-  url: { type: String, unique: true },
-  text: String,
-  embedding: [Number],
+  url: { type: String, required: true },
+  chunkIndex: { type: Number, required: true }, // Add chunkIndex
+  text: { type: String, required: true },
+  embedding: { type: [Number], required: true },
   updatedAt: { type: Date, default: Date.now },
 });
 
-const Vector = mongoose.model("Vector", vectorSchema);
+// Composite unique index for `url` and `chunkIndex`
+vectorSchema.index({ url: 1, chunkIndex: 1 }, { unique: true });
 
-export default Vector;
+export default mongoose.model("Vector", vectorSchema);
