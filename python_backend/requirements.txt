@@ -1,0 +1,7 @@
+flask
+llama-index
+langchain
+openai
+PyPDF2
+requests
+pinecone-client

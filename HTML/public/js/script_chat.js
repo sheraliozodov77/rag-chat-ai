@@ -14,40 +14,57 @@ function toggleNav() {
 
 // Function to send a message
 function sendMessage() {
-    var input = document.getElementById('chatInput');
-    var question = input.value.trim();
-    var chatBox = document.getElementById('chatBox');
-    var centerContent = document.getElementById('centerContent'); // Center content
+    const input = document.getElementById('chatInput');
+    const question = input.value.trim();
+    const chatBox = document.getElementById('chatBox');
+    const centerContent = document.getElementById('centerContent'); // Center content
 
     if (question !== "") {
         // Check if the chat has started (center content is hidden)
-        if (!chatBox.classList.contains('chat-started')) {
+        if (centerContent && !chatBox.classList.contains('chat-started')) {
             // Remove center content and mark chat as started
             chatBox.classList.add('chat-started');
             centerContent.style.display = 'none';
         }
 
-        fetch('/ask', {
+        // Display user's message in the chat
+        displayMessage(question, 'user');
+
+        // Fetch answer from the backend
+        fetch('http://localhost:3000/ask', { // Use full URL to avoid issues with relative paths
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ question: question }),
         })
-        .then(response => response.json())
+        .then(response => {
+            // Check if the response status is OK
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            displayMessage(question, 'user');
-            displayMessage(data.answer, 'ai');
-            input.style.height = 'auto';
-            autoResizeTextarea();
+            if (data.answer) {
+                // Display OpenAI's response
+                displayMessage(data.answer, 'ai');
+            } else {
+                // Handle the case when no answer is found
+                displayMessage("I'm sorry, I couldn't find an answer based on the provided PDFs.", 'ai');
+            }
         })
         .catch((error) => {
-            console.error('Error:', error);
+            // Log the error for debugging and display a user-friendly message
+            console.error('Error while fetching from /ask:', error);
+            displayMessage("An error occurred while processing your request. Please try again later.", 'ai');
+        })
+        .finally(() => {
+            // Reset textarea height and adjust chat container
+            input.style.height = 'auto';
+            input.value = "";
+            adjustChatContainer();
         });
-
-        input.value = "";
-        input.style.height = '50px';
-        adjustChatContainer();
     }
 }
 
@@ -80,16 +97,16 @@ function displayMessage(message, sender) {
     senderName.style.color = sender === 'user' ? '#3498DB' : '#2ECC71';
 
     messageText.textContent = message;
+    messageText.classList.add('message-text');
+
+    // Append sender and message text
     messageContainer.appendChild(senderName);
     messageContainer.appendChild(messageText);
 
     messageContainer.classList.add('message', sender);
-    messageText.classList.add('message-text');
-
     chatBox.appendChild(messageContainer);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
 }
-
 
 // Function to dynamically resize the textarea upwards
 function autoResizeTextarea() {
@@ -112,26 +129,6 @@ function autoResizeTextarea() {
     }
     adjustChatContainer(); // Adjust the chat container to account for new textarea size
 }
-
-// Event listener for keypress in textarea
-document.addEventListener('DOMContentLoaded', function() {
-    var textarea = document.getElementById('chatInput');
-    textarea.addEventListener('keydown', function(event) {
-        // Check if Enter is pressed without the Shift key
-        if (event.key === 'Enter' && !event.shiftKey) {
-            // Prevent the default action to avoid a newline being entered
-            event.preventDefault();
-            // Call the function to send the message
-            sendMessage();
-            // Reset the textarea height after sending the message
-            textarea.style.height = '50px';
-            adjustChatContainer(); // Adjust the chat container to account for new textarea size
-        }
-    });
-
-    textarea.addEventListener('input', autoResizeTextarea);
-    adjustChatContainer(); // Initial adjustment
-});
 
 // Adjust the chat container's bottom padding to fit the input area
 function adjustChatContainer() {
