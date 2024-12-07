@@ -176,97 +176,103 @@ async function deleteSession(sessionId) {
 // Load sessions into the sidebar
 async function loadSidebarHistory() {
     try {
-      const response = await fetch(`${API_BASE_URL}/sessions`, { method: "GET" });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const sessions = await response.json();
-      const sidebar = document.getElementById("chatHistory");
-      sidebar.innerHTML = ""; // Clear any existing chat history
-  
-      if (sessions.length === 0) {
-        const noChatsMessage = document.createElement("div");
-        noChatsMessage.textContent = "No chats available.";
-        noChatsMessage.classList.add("no-chats-message");
-        sidebar.appendChild(noChatsMessage);
-        return;
-      }
-  
-      sessions.forEach(({ sessionId, title }) => {
-        const sessionContainer = document.createElement("div");
-        sessionContainer.classList.add("session-container");
-  
-        const sessionLink = document.createElement("a");
-        sessionLink.textContent = title;
-        sessionLink.href = "#";
-        sessionLink.onclick = () => {
-          setSessionId(sessionId);
-          loadChatHistory(sessionId);
-        };
-  
-        // Create the three-dot menu
-        const menuContainer = document.createElement("div");
-        menuContainer.classList.add("menu-container");
-  
-        const ellipsisButton = document.createElement("button");
-        ellipsisButton.classList.add("ellipsis-btn");
-        ellipsisButton.textContent = "⋯";
-        ellipsisButton.onclick = (event) => {
-          event.stopPropagation(); // Prevent click event from propagating
-          toggleMenu(menuContainer);
-        };
-  
-        const menu = document.createElement("div");
-        menu.classList.add("menu");
-        menu.innerHTML = `<button class="delete-session-btn">Delete</button>`;
-        menu.style.display = "none"; // Initially hidden
-  
-        // Attach delete logic
-        menu.querySelector(".delete-session-btn").onclick = async (event) => {
-          event.stopPropagation(); // Prevent click event from propagating
-          await deleteSession(sessionId);
-        };
-  
-        menuContainer.appendChild(ellipsisButton);
-        menuContainer.appendChild(menu);
-  
-        sessionContainer.appendChild(sessionLink);
-        sessionContainer.appendChild(menuContainer);
-        sidebar.appendChild(sessionContainer);
-      });
-  
-      // Add global click listener to close menus
-      document.addEventListener("click", (event) => {
-        closeAllMenus(event);
-      });
+        const response = await fetch(`${API_BASE_URL}/sessions`, { method: "GET" });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const sessions = await response.json();
+        const sidebar = document.getElementById("chatHistory");
+        sidebar.innerHTML = ""; // Clear any existing chat history
+
+        if (sessions.length === 0) {
+            const noChatsMessage = document.createElement("div");
+            noChatsMessage.textContent = "No chats available.";
+            noChatsMessage.classList.add("no-chats-message");
+            sidebar.appendChild(noChatsMessage);
+            return;
+        }
+
+        sessions.forEach(({ sessionId, title }) => {
+            // Create container for each session
+            const sessionContainer = document.createElement("div");
+            sessionContainer.classList.add("session-container");
+
+            // Create session link
+            const sessionLink = document.createElement("a");
+            sessionLink.textContent = title; // Use the title with timestamp
+            sessionLink.href = "#";
+            sessionLink.onclick = (event) => {
+                event.preventDefault(); // Prevent default anchor behavior
+                setSessionId(sessionId);
+                loadChatHistory(sessionId);
+            };
+
+            // Create the three-dot menu
+            const menuContainer = document.createElement("div");
+            menuContainer.classList.add("menu-container");
+
+            const ellipsisButton = document.createElement("button");
+            ellipsisButton.classList.add("ellipsis-btn");
+            ellipsisButton.textContent = "⋯";
+            ellipsisButton.onclick = (event) => {
+                event.stopPropagation(); // Prevent click event from propagating
+                toggleMenu(menuContainer);
+            };
+
+            const menu = document.createElement("div");
+            menu.classList.add("menu");
+            menu.innerHTML = `<button class="delete-session-btn">Delete</button>`;
+            menu.style.display = "none"; // Initially hidden
+
+            // Attach delete logic
+            menu.querySelector(".delete-session-btn").onclick = async (event) => {
+                event.stopPropagation(); // Prevent click event from propagating
+                await deleteSession(sessionId);
+                loadSidebarHistory(); // Refresh the sidebar
+            };
+
+            menuContainer.appendChild(ellipsisButton);
+            menuContainer.appendChild(menu);
+
+            sessionContainer.appendChild(sessionLink);
+            sessionContainer.appendChild(menuContainer);
+            sidebar.appendChild(sessionContainer);
+        });
+
+        // Add global click listener to close menus
+        document.addEventListener("click", closeAllMenus);
     } catch (error) {
-      console.error("Error loading chat sessions:", error);
+        console.error("Error loading chat sessions:", error);
     }
-  }
-  
-  // Toggle the visibility of the menu
-  function toggleMenu(menuContainer) {
+}
+
+// Helper functions for menu toggle and close behavior
+function toggleMenu(menuContainer) {
     const menu = menuContainer.querySelector(".menu");
-  
-    // Close any other open menus
-    closeAllMenus();
-  
-    // Toggle the current menu
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-  }
-  
-  // Close all menus
-  function closeAllMenus(event = null) {
-    const menus = document.querySelectorAll(".menu");
-    menus.forEach((menu) => {
-      if (!event || (event.target.closest(".menu-container") !== menu.parentNode)) {
-        menu.style.display = "none";
-      }
+    const allMenus = document.querySelectorAll(".menu");
+
+    // Close all other menus before toggling
+    allMenus.forEach((otherMenu) => {
+        if (otherMenu !== menu) {
+            otherMenu.style.display = "none";
+        }
     });
-  }
-  
+
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+}
+
+function closeAllMenus(event) {
+    // Close all menus if the click is outside the menu
+    const allMenus = document.querySelectorAll(".menu");
+    allMenus.forEach((menu) => {
+        if (!menu.contains(event.target)) {
+            menu.style.display = "none";
+        }
+    });
+}
+
+
 
 // Add an event listener for the Enter key
 document.getElementById("chatInput").addEventListener("keypress", function (event) {
@@ -288,7 +294,7 @@ async function createNewChat() {
             throw new Error("Failed to create a new chat session.");
         }
 
-        const { sessionId } = await response.json();
+        const { sessionId, title } = await response.json(); // Fetch both sessionId and title
         setSessionId(sessionId);
         loadSidebarHistory(); // Refresh the sidebar
     } catch (error) {
@@ -296,6 +302,7 @@ async function createNewChat() {
         alert("Failed to create a new chat session.");
     }
 }
+
 
 // Get or generate session ID
 function getSessionId() {

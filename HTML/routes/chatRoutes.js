@@ -50,37 +50,36 @@ router.get("/getHistory/:sessionId", async (req, res) => {
 
 /**
  * Retrieve all chat sessions
- * @route GET /api/chats/sessions
- */
-router.get("/sessions", async (req, res) => {
-  try {
-    const sessions = await Chat.find({}, { sessionId: 1, _id: 0 }).lean();
-    const formattedSessions = sessions.map((session, index) => ({
-      sessionId: session.sessionId,
-      title: `Session ${index + 1}`,
-    }));
-    res.status(200).json(formattedSessions);
-  } catch (error) {
-    console.error("Error fetching chat sessions:", error);
-    res.status(500).json({ error: "Failed to fetch chat sessions" });
-  }
-});
-
-/**
+ * @route GET /api/chats/sessio/**
  * Create a new chat session
  * @route POST /api/chats/newSession
  */
 router.post("/newSession", async (req, res) => {
   try {
-    const newSessionId = Date.now().toString();
-    const chat = new Chat({ sessionId: newSessionId, messages: [] });
+    const newSessionId = Date.now().toString(); // Unique session ID
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    const newSessionTitle = `Session - ${formattedTime}`; // Add time with seconds only
+
+    const chat = new Chat({
+      sessionId: newSessionId,
+      title: newSessionTitle, // Pass the title
+      messages: [],
+    });
     await chat.save();
-    res.status(201).json({ sessionId: newSessionId });
+
+    res.status(201).json({ sessionId: newSessionId, title: newSessionTitle });
   } catch (error) {
     console.error("Error creating new chat session:", error);
     res.status(500).json({ error: "Failed to create a new chat session" });
   }
 });
+
 
 /**
  * Delete a chat session by session ID
@@ -99,6 +98,16 @@ router.delete("/sessions/:sessionId", async (req, res) => {
   } catch (error) {
     console.error("Error deleting session:", error);
     res.status(500).json({ error: "Failed to delete session" });
+  }
+});
+
+router.get("/sessions", async (req, res) => {
+  try {
+      const sessions = await Chat.find({}, { sessionId: 1, title: 1, _id: 0 }).sort({ createdAt: -1 });
+      res.status(200).json(sessions); // Return session ID and title directly
+  } catch (error) {
+      console.error("Error fetching sessions:", error.message);
+      res.status(500).json({ error: "Failed to fetch sessions" });
   }
 });
 

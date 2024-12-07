@@ -117,7 +117,7 @@ body, html {
     justify-content: center;
     align-items: center;
     position: absolute;
-    bottom: 0;
+    bottom: -50px;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -185,7 +185,7 @@ body, html {
 
 .input-group .send-button {
     position: absolute;
-    right: 4px;
+    right: 6px;
     background-color: #3a413a;
     color: white;
     border: none;

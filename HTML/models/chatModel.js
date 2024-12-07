@@ -8,9 +8,11 @@ const messageSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema({
   sessionId: { type: String, required: true }, // Unique session identifier
+  title: { type: String, required: true }, // Title is required
   messages: [messageSchema], // Array of messages
   createdAt: { type: Date, default: Date.now },
 });
+
 
 // Index for efficient session lookup
 chatSchema.index({ sessionId: 1 }, { unique: true });
