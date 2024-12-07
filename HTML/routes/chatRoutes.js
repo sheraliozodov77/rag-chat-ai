@@ -111,5 +111,32 @@ router.get("/sessions", async (req, res) => {
   }
 });
 
+router.patch("/sessions/:sessionId/rename", async (req, res) => {
+  try {
+      const { sessionId } = req.params;
+      const { title } = req.body;
+
+      if (!title || title.trim() === "") {
+          return res.status(400).json({ error: "Invalid title provided." });
+      }
+
+      const updatedSession = await Chat.findOneAndUpdate(
+          { sessionId },
+          { title },
+          { new: true }
+      );
+
+      if (!updatedSession) {
+          return res.status(404).json({ error: "Session not found." });
+      }
+
+      res.status(200).json({ message: "Session renamed successfully." });
+  } catch (error) {
+      console.error("Error renaming session:", error);
+      res.status(500).json({ error: "Failed to rename session." });
+  }
+});
+
+
 
 export default router;

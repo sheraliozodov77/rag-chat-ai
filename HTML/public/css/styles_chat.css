@@ -21,18 +21,22 @@ body, html {
 }
 
 .sidebar a {
-    padding: 8px 8px 8px 32px;
+    padding-top: 8px;    
+    padding-right: 15px;  
+    padding-bottom: 8px; 
+    padding-left: 15px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 16px;
     color: #ECF0F1;
     font-family: 'Roboto', 'Arial', sans-serif;
     display: block;
     transition: color 0.3s ease, background-color 0.3s ease;
+    width: 100%; /* Ensures the link spans the full width of the parent */
+    box-sizing: border-box; /* Includes padding in the width calculation */
 }
 
 .sidebar a:hover {
-    color: #3498DB;
-    background-color: #34495E;
+    background-color: #175fa774;
 }
 
 /* Sidebar Toggle Button */
@@ -44,8 +48,8 @@ body, html {
     padding: 7px 12px;
     border: none;
     position: absolute;
-    top: 24px;
-    left: 20px;
+    top: 25px;
+    left: 23px;
     border-radius: 5px;
     z-index: 2;
     transition: background-color 0.3s ease;
@@ -279,7 +283,7 @@ body, html {
     border-radius: 5px;
     padding: 10px 45px;
     margin-bottom: 10px;
-    margin-left: 20px;
+    margin-left: 23px;
     cursor: pointer;
     font-size: 15px;
     text-align: center;
@@ -288,9 +292,6 @@ body, html {
 .add-chat-btn:hover {
     background-color: #2980b9;
 }
-
-
-
 
 .logo {
     width: 90px;
@@ -307,4 +308,57 @@ body, html {
 /* Hide the center content when chat begins */
 .chat-started .center-content {
     display: none;
+}
+
+/* Sidebar container */
+.sidebar {
+    height: 100%;
+    width: 250px; /* Fixed width for the sidebar */
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111; /* Adjust color as needed */
+    overflow: hidden; /* Hide overflowing content */
+    transition: transform 0.5s ease; /* Smooth open/close animation */
+}
+
+/* Sidebar hidden state */
+.sidebar.closed {
+    transform: translateX(-250px); /* Slide out of view */
+}
+
+/* Sidebar links and buttons */
+.sidebar a,
+.sidebar .addchatbtn {
+    padding-top: 8px;    
+    padding-right: 15px;  
+    padding-bottom: 8px; 
+    padding-left: 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #ECF0F1;
+    font-family: 'Roboto', 'Arial', sans-serif;
+    display: block;
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in width */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Adjust button styling */
+.sidebar .addchatbtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.sidebar .addchatbtn:hover {
+    background-color: #45a049;
+}
+
+/* Sidebar hidden state */
+.sidebar.closed {
+    transform: translateX(-250px); /* Slide out of view */
 }

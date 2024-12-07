@@ -17,6 +17,15 @@ function toggleNav() {
     }
 }
 
+// Function to toggle the sidebar
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('closed'); // Add or remove the 'closed' class
+}
+
+// Attach to your sidebar toggle button
+document.querySelector('.openbtn').addEventListener('click', toggleSidebar);
+
 // Function to send a message
 async function sendMessage() {
     const input = document.getElementById("chatInput");
@@ -222,8 +231,21 @@ async function loadSidebarHistory() {
 
             const menu = document.createElement("div");
             menu.classList.add("menu");
-            menu.innerHTML = `<button class="delete-session-btn">Delete</button>`;
+            menu.innerHTML = `
+                <button class="rename-session-btn">Rename</button>
+                <button class="delete-session-btn">Delete</button>
+            `;
             menu.style.display = "none"; // Initially hidden
+
+            // Attach rename logic
+            menu.querySelector(".rename-session-btn").onclick = async (event) => {
+                event.stopPropagation(); // Prevent click event from propagating
+                const newTitle = prompt("Enter a new name for this session:", title);
+                if (newTitle && newTitle.trim() !== "") {
+                    await renameSession(sessionId, newTitle.trim());
+                    loadSidebarHistory(); // Refresh the sidebar
+                }
+            };
 
             // Attach delete logic
             menu.querySelector(".delete-session-btn").onclick = async (event) => {
@@ -244,6 +266,25 @@ async function loadSidebarHistory() {
         document.addEventListener("click", closeAllMenus);
     } catch (error) {
         console.error("Error loading chat sessions:", error);
+    }
+}
+
+// Helper function to rename a session
+async function renameSession(sessionId, newTitle) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/rename`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: newTitle }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to rename session.");
+        }
+    } catch (error) {
+        console.error("Error renaming session:", error);
     }
 }
 
@@ -271,6 +312,7 @@ function closeAllMenus(event) {
         }
     });
 }
+
 
 
 
