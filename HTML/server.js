@@ -12,6 +12,8 @@ import pdfRoutes from "./routes/pdfRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import authenticate from "./middleware/authenticate.js";
+import chatRoutes from "./routes/chatRoutes.js";
+
 
 const app = express();
 
@@ -51,8 +53,9 @@ app.use(session({
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/pdf', pdfRoutes); // Add PDF ingestion routes
+app.use('/pdf', pdfRoutes);
 app.use(openaiRoutes);
+app.use("/", chatRoutes);
 
 // Simulate `__dirname` in ES Modules
 const __filename = fileURLToPath(import.meta.url);

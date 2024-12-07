@@ -9,15 +9,16 @@
 <body>
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
-        <a href="#">Home</a>
-        <a href="#">Account</a>
-        <a href="#">Settings</a>
-        <!-- Add more sidebar items here -->
+        <button class="add-chat-btn" id="newChatButton">Add New Chat</button>
+        <div id="chatHistory" class="chat-history">
+            <!-- Chat history will be dynamically added here -->
+        </div>
     </div>
 
-    <!-- Account Button -->
-    <span class="openbtn" onclick="toggleNav()">&#9776; Profile</span>
-
+    <!-- Account and Add Chat Buttons -->
+    <div class="buttons-container">
+        <span class="openbtn" onclick="toggleNav()">&#9776; Profile</span>
+    </div>
     <!-- Chat Container -->
     <div class="chat-container">
         <div class="chat-box" id="chatBox">
@@ -37,6 +38,5 @@
     </div>
 
     <script src="./js/script_chat.js"></script>
-    <script src="./js/client.js"></script>
 </body>
 </html>
