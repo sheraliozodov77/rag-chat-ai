@@ -44,7 +44,7 @@ router.post("/ask", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant. Use the following context to answer the user's question strictly based on the information provided.",
+          content: "You are a helpful assistant. Use the following context to answer the user's question within the provided max_tokens limit. Ensure the answer is clear, complete, and makes sense without cutting off. Do not provide answers outside the scope of the text provided in the context, including any general knowledge or assumptions. Only respond based on the information explicitly available in the given text.",
         },
         {
           role: "system",
@@ -55,7 +55,7 @@ router.post("/ask", async (req, res) => {
           content: userInput,
         },
       ],
-      max_tokens: 300, // Limit the length of the response
+      max_tokens: 500, // Limit the length of the response
       temperature: 0.7,
     });
 

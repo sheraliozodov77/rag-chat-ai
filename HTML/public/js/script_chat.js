@@ -95,7 +95,7 @@ function displayTypingEffect(message, sender) {
         } else {
             clearInterval(interval);
         }
-    }, 5); // Adjust typing speed
+    }, 18); // Adjust typing speed
 
     messageText.classList.add("message-text");
     messageContainer.appendChild(messageText);
