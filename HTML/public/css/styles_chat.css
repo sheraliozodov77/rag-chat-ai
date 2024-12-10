@@ -24,7 +24,7 @@ body, html {
     padding-top: 8px;    
     padding-right: 15px;  
     padding-bottom: 8px; 
-    padding-left: 15px;
+    padding-left: 5px;
     text-decoration: none;
     font-size: 16px;
     color: #ECF0F1;
@@ -281,9 +281,9 @@ body, html {
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 45px;
+    padding: 10px 49px;
     margin-bottom: 10px;
-    margin-left: 23px;
+    margin-left: 19px;
     cursor: pointer;
     font-size: 15px;
     text-align: center;
@@ -332,9 +332,9 @@ body, html {
 .sidebar a,
 .sidebar .addchatbtn {
     padding-top: 8px;    
-    padding-right: 15px;  
+    padding-right: 12px;  
     padding-bottom: 8px; 
-    padding-left: 15px;
+    padding-left: 6px;
     text-decoration: none;
     font-size: 16px;
     color: #ECF0F1;
@@ -343,6 +343,7 @@ body, html {
     width: 100%; /* Ensure full width */
     box-sizing: border-box; /* Include padding in width */
     transition: color 0.3s ease, background-color 0.3s ease;
+    margin-left: 8.5px;
 }
 
 /* Adjust button styling */
