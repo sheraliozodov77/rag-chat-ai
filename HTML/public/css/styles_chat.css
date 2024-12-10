@@ -305,10 +305,7 @@ body, html {
     color: #ECF0F1;
 }
 
-/* Hide the center content when chat begins */
-.chat-started .center-content {
-    display: none;
-}
+
 
 /* Sidebar container */
 .sidebar {
