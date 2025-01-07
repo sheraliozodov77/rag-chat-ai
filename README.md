@@ -27,14 +27,7 @@ cd rag-chatbot
 2. Install Dependencies
 npm install
 3. Configure Environment Variables
-Create a .env file in the root directory and add the following variables:
-
-MONGO_URI=<your-mongodb-uri>
-OPENAI_API_KEY=<your-openai-api-key>
-PINECONE_API_KEY=<your-pinecone-api-key>
-PINECONE_INDEX_NAME=<your-pinecone-index-name>
-PINECONE_ENVIRONMENT=<your-pinecone-environment>
-
+Create a .env file in the root directory and add environment variables.
 4. Run the Application
 npm start
 Access the application at http://localhost:3000.
